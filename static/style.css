@@ -1,0 +1,137 @@
+/*########  Change Bootstrap Defaults ########*/
+body {
+	background: #4b80bb;
+}
+
+body > .container {
+	margin-bottom: 40px;
+}
+
+div.content {
+	padding-top: 60px;
+	padding-bottom: 30px;
+}
+
+* {
+	border-radius: 0 !important;
+}
+
+.navbar {
+	border-radius: 0px;
+}
+
+.text-error {
+	color: #a94442;
+}
+
+.form-alert {
+	float: right;
+	padding-right: 20px;
+}
+
+.modal-dialog {
+    margin-top: 100px;
+}
+
+button a {
+	color: #fff;
+	text-decoration: none;
+}
+
+.page-header {
+	border-bottom: 0;
+}
+/*########  Tag/Typeahead Layout ########*/
+
+.bootstrap-tagsinput {
+	width: 100%;
+	margin-top: -6px;
+	overflow: hidden;
+}
+
+/*.form-group .control-label {
+	display: none;
+}*/
+
+.bootstrap-tagsinput .label-info {
+	background-color:#2f7fd7;
+	font-size: 80%;
+}
+
+i.fa-tags {
+	padding-right: 5px;
+}
+
+/*########  Special Layouts ########*/
+
+.panel-heading .fa {
+	padding-top: 3px;
+}
+
+.filter-wrapper {
+	margin-top: -4px;
+	overflow: hidden;
+	height: 85%;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	display: inline-block;
+	padding: 1px 6px;
+	color: #555;
+	vertical-align: middle;
+	border-radius: 4px;
+	max-width: 100%;
+	width: 37.5%;
+	line-height: 22px;
+	cursor: text;
+}
+
+.filter-wrapper input {
+	border: 0;
+	width: 80%;
+}
+
+.chart-title {
+	font-size: 18px; 
+	font-family: Lucida Grande, Lucida Sans Unicode, Verdana, Arial, Helvetica, sans-serif;
+}
+
+.upload, form.dropzone {
+	height: 200px;
+	margin-bottom: 30px;
+}
+
+.panel-heading .pull-right i {
+	padding-right: 15px;
+}
+
+.panel-heading small {
+	padding-top: 2px;
+}
+
+.packetTitle {
+	height: 40px;
+}
+
+/*########  Photo View  ########*/
+
+.voteButtons {
+	margin-top: 15px;
+}
+.profile-tile {
+	margin: 15px 0;
+}
+
+.tile-cropped {
+  width: 100px;
+  height: 100px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+.carusel-cropped {
+  width: 350px;
+  height: 350px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}

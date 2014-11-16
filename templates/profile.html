@@ -1,0 +1,135 @@
+{% extends "layout.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block title %}
+{{ super()}}
+Profile - {{ current_user.username }}
+{% endblock %} 
+
+{% block content %}
+{{ super() }}
+<div class="container content">
+	
+	{% if form %}
+
+		<div class="col-md-8 col-md-offset-2">
+			<div class="page-header">
+			{% for category, message in get_flashed_messages(with_categories=true, category_filter=["warning", "danger", "success"]) %} 
+			<div class="alert alert-{{ category }}">
+				<button type="button" class="close" data-dismiss="alert">&times;</button>
+				{{ message }}
+			</div>
+			{% endfor %}
+			<div>
+
+		    <h3>Profile Settings</h3>
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    {{ wtf.quick_form(form) }} 
+			  </div>
+			</div>
+		</div>
+
+	{% else %}
+		<div class="col-md-8 col-md-offset-2">
+			<div class="page-header">
+				{% for category, message in get_flashed_messages(with_categories=true, category_filter=["warning", "danger", "success"]) %} 
+				<div class="alert alert-{{ category }}">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					{{ message }}
+				</div>
+				{% endfor %}
+			</div>
+
+		    <h3>Photos</h3>
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    {% for photo in photos %}
+			    	<div class="row profile-tile well">
+			    		<div class="col-md-3 tile-cropped" style="background-image: url('{{ url_for('static', filename='photos/%s' % photo.filename) }}');">
+			    			
+			    		</div>
+			    		<div class="col-md-9">
+			    			<dl class="dl-horizontal">
+				    			<dt>Caption</dt>
+				    			<dd>{{ photo.caption }}</dd>
+				    			<dt>Up Votes</dt>
+				    			<dd>{{ votes[photo.id]['up'] }}</dd>
+				    			<dt>Down Votes</dt>
+				    			<dd>{{ votes[photo.id]['down'] }}</dd>
+				    			<dt>Vote Value</dt>
+				    			<dd>{{ votes[photo.id]['total'] }}</dd>
+			    			</dl>
+			    		</div>
+			    		
+			    		<a class="deleteButton" data-toggle="modal" data-target="#deleteModal" data-id="{{ photo.id }}" href="#">
+				    		<i class="fa fa-times text-alert pull-right"></i>
+			    		</a>
+
+			    	</div>
+			    {% endfor %}
+			  </div>
+			</div>
+		</div>
+
+		<!-- Delete Modal -->
+		<div class="modal fade" id="deleteModal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		        <h4 class="modal-title">Delete Photo</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p></p>
+		      </div>
+		      <div class="modal-footer">
+		      	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-danger"><a id="confirmDelete">Confirm Delete</a></button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	{% endif %}
+	
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript">
+	
+
+	$(document).ready(function(){
+		
+		{% if photos %}
+			
+			$('.deleteButton').on('click', function(){
+				var photo_id = $(this).data('id');
+				$('#deleteModal .modal-body p').html('Are you sure you want to delete this photo?');
+				$('#confirmDelete').on('click', function(e){
+					$.ajax({
+						type : "GET",
+			   			url : "/photos/delete/" + photo_id,
+			   			contentType: 'application/json;charset=UTF-8',
+			   			success: function(json){
+			   				location.reload(); 
+					   	}
+					});
+				});
+			});
+		
+		{% else %}
+			
+			$('input#email').focus();
+
+		{% endif %}
+	
+	});
+
+		
+
+
+</script>
+
+{% endblock %}

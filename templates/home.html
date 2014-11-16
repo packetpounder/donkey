@@ -1,0 +1,191 @@
+{% extends "layout.html" %} 
+{% import "bootstrap/wtf.html" as wtf %} 
+
+{% block title %}
+Home {{ super()}}
+{% endblock %} 
+
+{% block content %}
+{{ super() }}
+
+
+<div class="container-fluid content">
+	
+	<div class="col-md-12">
+		{% for category, message in get_flashed_messages(with_categories=true) %} 
+		<div class="alert alert-{{ category }}">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			{{ message }}
+		</div>
+		{% endfor %}
+		<br/>
+		
+
+		<div class="row">
+			<div class="col-lg-12 col-md-12">
+				<div class="photo-carusel">
+					{% for photo in photos %}
+					   <div>
+					      <a class="photoModal" data-toggle="modal" data-target="#photoModal" data-id="{{ photo.id }}" data-caption="{{ photo.caption }}" href="#">
+					      	<img class="carusel-photo img-responsive img-rounded" src="{{ url_for('static', filename='photos/%s' % photo.filename) }}" alt="{{ photo.caption }}">
+					      </a>
+					     </div> 
+					{% endfor %}
+							    
+				</div>
+			</div>
+		</div>
+		
+		<div class="row dropzone-previews text-center">
+			<p class="">Drag files or 
+			  <button class="btn btn-primary start dropzone-label">
+		          <i class="fa fa-upload"></i>
+		          <span>Upload</span>
+		      </button>
+		    </p>
+		</div>
+
+
+
+		<!-- Photo Modal -->
+		<div class="modal fade" id="photoModal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+
+		      <div class="modal-body">
+		      	<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		      	<img class="img-responsive img-thumbnail">	
+		      </div>
+		      <div class="modal-footer">
+		      	<h3 class="text-center pull-left"></h3>
+		      		<span class="voteButtons text-muted">
+			      		<a href="#" data-value="down"><i class="fa fa-3x fa-thumbs-o-down"></i></a>
+			      		<a href="#" data-value="up"><i class="fa fa-3x fa-thumbs-o-up"></i></a>
+			      	</span>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+		<!-- Temp Password Modal -->
+		<div class="modal fade" id="tempPasswordModal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        
+		        <h4 class="modal-title">Temporary Password</h4>
+		      </div>
+		      <div class="modal-body">
+		      	<p>Hi {{current_user.username|title }}, you currently have a temporary password and must change it to continue.</p>
+		        <form class="form" method="post" role="form">
+		          {{ form.hidden_tag() }}
+		          {{ wtf.form_errors(form, hiddens="only") }}
+
+		          {{ wtf.form_field(form.temp_password) }}
+		          {{ wtf.form_field(form.new_password1) }}
+		          {{ wtf.form_field(form.new_password2) }}
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        {{ wtf.form_field(form.submit, button_map={'submit': 'primary'}) }}
+		      </div>
+		        </form>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+		
+	</div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script src="{{ url_for('static', filename='dropzone.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='slick.min.js') }}"></script>
+
+<script type="text/javascript">
+	Dropzone.autoDiscover = false;
+
+	$(document).ready(function(){
+
+		{% if current_user.temp_password == True %}
+
+			$('#tempPasswordModal').on('shown.bs.modal', function (e) {
+				$('input#temp_password').focus();
+			});
+
+			$('#tempPasswordModal').modal(show=true);
+
+		{% endif %}
+
+		$('.photo-carusel').slick({
+			centerMode: true,
+			  centerPadding: '60px',
+			  slidesToShow: 3,
+			  responsive: [
+			    {
+			      breakpoint: 768,
+			      settings: {
+			        arrows: false,
+			        centerMode: true,
+			        centerPadding: '40px',
+			        slidesToShow: 3
+			      }
+			    },
+			    {
+			      breakpoint: 480,
+			      settings: {
+			        arrows: false,
+			        centerMode: true,
+			        centerPadding: '40px',
+			        slidesToShow: 1
+			      }
+			    }
+			  ]
+		});
+
+		$('a.photoModal').on('click', function(e){
+			e.preventDefault();
+			var caption = $(this).data('caption');
+			var photo_id = $(this).data('id');
+			var filename = $(this).find('img').attr('src');
+			console.log(caption, filename);
+			$('#photoModal .modal-body img').attr('src', filename);
+			$('#photoModal .modal-footer h3').text(caption);
+			$('.voteButtons a').attr('data-id', photo_id);
+
+		});
+
+		var captureUpload = new Dropzone(document.body, {
+			previewsContainer: ".dropzone-previews",
+			clickable: '.dropzone-label',
+			url: "{{ url_for('upload_photo') }}",
+			maxFilesize: 5,
+			init: function() {
+			    this.on("success", function(file) { 
+			    	location.reload(); 
+			    });
+			  }
+		});
+
+		$('.voteButtons a').on('click', function(e){
+			e.preventDefault();
+			$.ajax({
+				type : "POST",
+				data : $(this).data('value'),
+	   			url : "/photos/vote/" + $(this).data('id'),
+	   			contentType: 'application/json;charset=UTF-8',
+	   			success: function(json){
+	   				// location.reload(); 
+			   	}
+			});
+		});
+
+
+	});
+</script>
+{% endblock %}
