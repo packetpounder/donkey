@@ -3,7 +3,7 @@
 {% block head %}
 {{super()}}
 
-<title>{% block title %}{% endblock %} - Donkey</title> 
+<title>{% block title %}Donkey{% endblock %}</title> 
 <!-- <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"> -->
 <!-- <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
 <!-- <script src="{{ url_for('static', filename='jquery.min.js') }}"></script> -->
@@ -19,64 +19,82 @@
 <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css', _external=True) }}"> -->
 <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet"> -->
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dropzone.css', _external=True) }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css', _external=True) }}">
+<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css', _external=True) }}"> -->
 <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='font-awesome.min.css') }}"> -->
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='slick.css', _external=True) }}"/>
+<link href="{{ url_for('static', filename='css/freelancer.css', _external=True) }}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/slick.css', _external=True) }}"/>
 
 {% endblock %}
     
 {% block content %}
-	<div class="navbar navbar-default navbar-fixed-top" role="navigation"> 
-		<div class="container-fluid">
-	    	<div class="navbar-header">
-		    	<button type="button" class="navbar-toggle"	data-toggle="collapse" data-target=".navbar-collapse"> 
-			    	<span class="sr-only">Toggle navigation</span> 
-			    	<span class="icon-bar"></span>
-			    	<span class="icon-bar"></span>
-			    	<span class="icon-bar"></span> 
-		    	</button>
-		    	<a class="navbar-brand" href="/">Donkey</a> 
-	    	</div>
-	    	<div class="navbar-collapse collapse"> 
-	    	<ul class="nav navbar-nav">
-		    	{% if current_user.is_authenticated() %}
-			    	 
-		    	{% endif %}
-	    	</ul>
-	    	<ul class="nav navbar-nav navbar-right">
-		    	{% if current_user.is_authenticated() %}
+	<!-- Navigation -->
+	<nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{ url_for('home') }}">Donkey</a>
+            </div>
 
-			    	<li class="dropdown">
-	    	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ current_user.username }} <span class="caret"></span></a>
-	    	          <ul class="dropdown-menu" role="menu">
-	    	            <li><a href="{{ url_for('profile') }}"><i class="fa fa-cogs"></i> Profile</a></li>
-	    	            <li><a href="{{ url_for('profile_photos') }}"><i class="fa fa-picture-o"></i> Photos</a></li>
-	    	            {% if current_user.role == 'admin' %}
-		    	            <li><a href="{{ url_for('users') }}"><i class="fa fa-users"></i> Edit Users</a></li>
-		    	            <li><a href="{{ url_for('logs') }}"><i class="fa fa-list-alt"></i> View Logs</a></li>
-		    	        {% endif %}
-	    	            <li class="divider"></li>
-	    	            <li><a href="{{ url_for('logout') }}"><i class="fa fa-sign-out"></i> Sign Out</a></li>
-	    	          </ul>
-	    	        </li>
-		    	{% else %}
-			    	<li><a href="{{ url_for('login') }}">Sign In</a></li> 
-		    	{% endif %}
-	    	</ul>
-	        </div>
-	    </div>
-	</div>
-	<div id="wrapper">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <!-- <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li> -->
+                    {% if current_user.is_authenticated() %}
+	                    <li class="page-scroll">
+	                        <a href="{{ url_for('profile') }}">My Photos</a>
+	                    </li>
+	                    <li class="page-scroll">
+	                        <a href="{{ url_for('logout') }}">Sign Out</a>
+	                    </li>
+                    {% else %}
+                    <li class="page-scroll">
+                        <a href="{{ url_for('login') }}">Sign In</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
 
-	
-    
-{% endblock %}
+
+{% endblock content %}
+
+
 
 {% block scripts %}
 {{ super() }}
 
+	<!-- Plugin JavaScript -->
+	<script src="{{ url_for('static', filename='js/classie.js', _external=True) }}"></script>
+	<script src="{{ url_for('static', filename='js/cbpAnimatedHeader.js', _external=True) }}"></script>
+
+
 <script type="text/javascript">
-	$('.dropdown-toggle').dropdown();
+	
+	$(document).ready(function(){
+		// Closes the Responsive Menu on Menu Item Click
+		$('.navbar-collapse ul li a').click(function() {
+		    $('.navbar-toggle:visible').click();
+		});
+
+		$(document).bind('drop dragover', function (e) {
+		    e.preventDefault();
+		});
+	});
+
 </script>
 {% endblock %}
