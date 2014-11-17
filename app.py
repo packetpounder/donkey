@@ -16,7 +16,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/donkey'
+    #SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/donkey'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SECRET_KEY = 'yCt2asdfTsLHvL#BG6'
 
