@@ -10,7 +10,7 @@ from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import LoginManager, login_required, login_user, UserMixin, logout_user, current_user
 from werkzeug import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import LoginForm, EditTags, ProfileForm, AddUser, EditUser, TempPasswordForm
+from forms import LoginForm, ProfileForm, AddUser, EditUser, TempPasswordForm
 from flask.ext.migrate import Migrate, MigrateCommand
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -36,9 +36,7 @@ def format_comma(value):
 app.jinja_env.filters['format_comma'] = format_comma
 
 ## db setup
-db = SQLAlchemy(app, session_options = {
-    'expire_on_commit': False
-    })
+db = SQLAlchemy(app)
 
 
 migrate = Migrate(app, db)
@@ -92,7 +90,7 @@ class Photo(db.Model):
         return '<TraceFile %r, filename: %r>\n' % (self.name, self.filename)
 
 class Vote(db.Model):
-    __tablename__ = 'tags'
+    __tablename__ = 'votes'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -149,8 +147,7 @@ def logout():
     flash('You have been logged out.', 'warning')
     return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST']) 
-@login_required
+@app.route('/', methods=['GET', 'POST'])
 def home():
 
     form = TempPasswordForm()
@@ -290,9 +287,24 @@ def profile():
 
         user = User.query.filter_by(username=current_user.username).one()
         
+        photos = Photo.query.filter_by(user_id=user.id).all()
+
+        votes = {}
+
+        for photo in photos:
+            temp_votes = Vote.query.filter_by(photo_id=photo.id).all()
+            votes[photo.id] = {'up': 0, 'down': 0}
+            for vote in temp_votes:
+                if vote.value > 0:
+                    votes[photo.id]['up'] += 1
+                else:
+                    votes[photo.id]['down'] += 1
+
+            votes[photo.id]['total'] = votes[photo.id]['up'] - votes[photo.id]['down']
+
         form.email.data = user.email
 
-        return render_template('profile.html', form=form)
+        return render_template('profile.html', form=form, photos=photos, votes=votes)
 
 @app.route('/profile/photos')
 @login_required
@@ -380,8 +392,8 @@ def api_delete_file(photo_id, token):
 
     if token == user.token:
         
-        Photo.query.filter_by(id=photo_id).delete()
         Vote.query.filter_by(photo_id=photo_id).delete()
+        Photo.query.filter_by(id=photo_id).delete()
 
         db.session.commit()
 
@@ -413,9 +425,18 @@ def vote(photo_id):
     # existing vote by user for this photo
     existing_vote = Vote.query.filter_by(photo_id=photo_id).filter_by(user_id=current_user.id).first()
 
-    # if existing vote matches current vote
     if existing_vote:
-        existing_vote.value = vote_value[vote]
+        if existing_vote.value == vote_value[vote]:
+            Vote.query.filter_by(photo_id=photo_id).filter_by(user_id=current_user.id).delete()
+        else:
+            existing_vote.value = vote_value[vote]
+            # db.session.merge(existing_vote)
+
+        db.session.commit()
+        db.session.flush()
+        # db.session.refresh(existing_vote)
+
+    # if existing vote matches current vote
     else:
         new_vote = Vote(
             photo_id = photo_id,
@@ -424,10 +445,28 @@ def vote(photo_id):
             )
 
         db.session.add(new_vote)
-    
-    db.session.commit()
+        db.session.commit()
+        db.session.flush()
+        # db.session.refresh(new_vote)
+
     
     return 'Success', 200
+
+@app.route('/photos/checkvote/<photo_id>')
+@login_required
+def check_vote(photo_id):
+
+
+    existing_vote = Vote.query.filter_by(photo_id=photo_id).filter_by(user_id=current_user.id).first()
+
+    try:
+        if existing_vote.value == 1:
+            return 'up', 200
+        else:
+            return 'down', 200
+    except AttributeError:
+        return 'none', 204
+
 
 # @app.route('/savename/<file_id>', methods=['POST'])
 # @login_required

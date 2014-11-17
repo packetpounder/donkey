@@ -1,52 +1,167 @@
 {% extends "layout.html" %} 
 {% import "bootstrap/wtf.html" as wtf %} 
 
-{% block title %}
-Home {{ super()}}
+{% block title %} 
+{{ super()}}
+- Home
 {% endblock %} 
 
 {% block content %}
 {{ super() }}
 
 
-<div class="container-fluid content">
-	
-	<div class="col-md-12">
-		{% for category, message in get_flashed_messages(with_categories=true) %} 
-		<div class="alert alert-{{ category }}">
-			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			{{ message }}
-		</div>
-		{% endfor %}
-		<br/>
-		
-
-		<div class="row">
-			<div class="col-lg-12 col-md-12">
-				<div class="photo-carusel">
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="photo-carusel">
+					
 					{% for photo in photos %}
-					   <div>
+					   <div class="carusel-photo">
 					      <a class="photoModal" data-toggle="modal" data-target="#photoModal" data-id="{{ photo.id }}" data-caption="{{ photo.caption }}" href="#">
-					      	<img class="carusel-photo img-responsive img-rounded" src="{{ url_for('static', filename='photos/%s' % photo.filename) }}" alt="{{ photo.caption }}">
+					      	<div class="carusel-crop img-rounded img-responsive" style="background-image: url('{{ url_for('static', filename='photos/%s' % photo.filename) }}');" ></div>
 					      </a>
+		            		<span class="voteButtons vote-hover pull-right text-muted hide">
+			      	      		<a href="#" data-value="down" data-id="{{ photo.id }}"><i class="fa fa-3x fa-thumbs-o-down text-muted"></i></a>
+			      	      		<a href="#" data-value="up" data-id="{{ photo.id }}"><i class="fa fa-3x fa-thumbs-o-up text-muted"></i></a>
+			      	      	</span>
 					     </div> 
 					{% endfor %}
 							    
 				</div>
-			</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<!-- Portfolio Grid Section -->
+<!-- <section id="portfolio">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>Portfolio</h2>
+                <hr class="star-primary">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal1" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/cabin.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal2" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/cake.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal3" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/circus.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal4" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/game.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal5" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/safe.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+            <div class="col-sm-4 portfolio-item">
+                <a href="#portfolioModal6" class="portfolio-link" data-toggle="modal">
+                    <div class="caption">
+                        <div class="caption-content">
+                            <i class="fa fa-search-plus fa-3x"></i>
+                        </div>
+                    </div>
+                    <img src="{{ url_for('static', filename="img/portfolio/submarine.png") }}"f class="img-responsive" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<!-- About Section -->
+<!-- <section class="success" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2>About</h2>
+                <hr class="star-light">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 col-lg-offset-2">
+                <p>Freelancer is a free bootstrap theme created by Start Bootstrap. The download includes the complete source files including HTML, CSS, and JavaScript as well as optional LESS stylesheets for easy customization.</p>
+            </div>
+            <div class="col-lg-4">
+                <p>Whether you're a student looking to showcase your work, a professional looking to attract clients, or a graphic artist looking to share your projects, this template is the perfect starting point!</p>
+            </div>
+            <div class="col-lg-8 col-lg-offset-2 text-center">
+                <a href="#" class="btn btn-lg btn-outline">
+                    <i class="fa fa-download"></i> Download Theme
+                </a>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+		<!-- Portfolio Modal -->
+		<div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true">
+		    <div class="modal-content">
+		        <div class="close-modal" data-dismiss="modal">
+		            <div class="lr">
+		                <div class="rl">
+		                </div>
+		            </div>
+		        </div>
+		        <div class="container">
+		            <div class="row">
+		                <div class="col-lg-8 col-lg-offset-2">
+		                    <div class="modal-body">
+		                        <img class="img-responsive img-centered" alt="">
+		                        <h3 class="text-center pull-left"></h3>
+            		      		<span class="voteButtons">
+            			      		<a href="#" data-value="down" disabled><i class="fa fa-3x fa-thumbs-o-down text-muted"></i></a>
+            			      		<a href="#" data-value="up" disabled><i class="fa fa-3x fa-thumbs-o-up"></i></a>
+            			      	</span>
+            
+		                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
 		</div>
-		
-		<div class="row dropzone-previews text-center">
-			<p class="">Drag files or 
-			  <button class="btn btn-primary start dropzone-label">
-		          <i class="fa fa-upload"></i>
-		          <span>Upload</span>
-		      </button>
-		    </p>
-		</div>
-
-
-
 		<!-- Photo Modal -->
 		<div class="modal fade" id="photoModal">
 		  <div class="modal-dialog">
@@ -54,20 +169,23 @@ Home {{ super()}}
 
 		      <div class="modal-body">
 		      	<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-		      	<img class="img-responsive img-thumbnail">	
+		      	<div class="img-responsive modal-crop img-rounded">	
 		      </div>
 		      <div class="modal-footer">
 		      	<h3 class="text-center pull-left"></h3>
+		      		{% if current_user.is_authenticated() %}
 		      		<span class="voteButtons text-muted">
-			      		<a href="#" data-value="down"><i class="fa fa-3x fa-thumbs-o-down"></i></a>
-			      		<a href="#" data-value="up"><i class="fa fa-3x fa-thumbs-o-up"></i></a>
+			      		<a href="#" data-value="down"><i class="fa fa-3x fa-thumbs-o-down text-muted"></i></a>
+			      		<a href="#" data-value="up"><i class="fa fa-3x fa-thumbs-o-up text-muted"></i></a>
 			      	</span>
+			      	{% endif %}
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
 
 		<!-- Temp Password Modal -->
+		{% if current_user.is_authenticated() %}
 		<div class="modal fade" id="tempPasswordModal">
 		  <div class="modal-dialog">
 		    <div class="modal-content">
@@ -93,9 +211,22 @@ Home {{ super()}}
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->
 		</div><!-- /.modal -->
-
-		
+		{% endif %}
+			
 	</div>
+	
+	<div class="row dropzone-previews text-center">
+		<p class="">Drag photos or click to 
+		  <button class="btn btn-primary start dropzone-label">
+	          <i class="fa fa-upload"></i>
+	          <span>Upload</span>
+	      </button>
+	    </p>
+	</div>
+
+	<div class="modal fade dropzone-modal">
+	  <p>Test</p>
+	</div><!-- /.modal -->
 </div>
 
 
@@ -104,8 +235,8 @@ Home {{ super()}}
 {% block scripts %}
 {{ super() }}
 
-<script src="{{ url_for('static', filename='dropzone.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='slick.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/slick.min.js') }}"></script>
 
 <script type="text/javascript">
 	Dropzone.autoDiscover = false;
@@ -122,6 +253,52 @@ Home {{ super()}}
 
 		{% endif %}
 
+		$('.carusel-photo').hover(function() {
+		        $(this).find('.voteButtons').removeClass('hide');
+		        // var photo_id = $(this).find('a').data('id');
+		        // $.ajax({
+		        // 	type : 'GET',
+		        // 	url : "/photos/checkvote/" + photo_id,
+		        // 	contentType: 'application/json;charset=UTF-8',
+		        // 	success: function(json){
+		        // 		$('[data-value="'+ json + '"] i').removeClass('text-muted');
+		        // 	},
+		        // 	error: function(json){
+		        // 	}
+		        // });
+
+		    }, function() {
+		        $(this).find('.voteButtons').addClass('hide');
+		    });
+
+		// $(document).bind('dragover', function (e) {
+		//     var dropZone = $('.dropzone-modal'),
+		//         timeout = window.dropZoneTimeout;
+		//     if (!timeout) {
+		//         dropZone.addClass('in');
+		//     } else {
+		//         clearTimeout(timeout);
+		//     }
+		//     var found = false,
+		//         node = e.target;
+		//     do {
+		//         if (node === dropZone[0]) {
+		//             found = true;
+		//             break;
+		//         }
+		//         node = node.parentNode;
+		//     } while (node != null);
+		//     if (found) {
+		//         dropZone.addClass('hover');
+		//     } else {
+		//         dropZone.removeClass('hover');
+		//     }
+		//     window.dropZoneTimeout = setTimeout(function () {
+		//         window.dropZoneTimeout = null;
+		//         dropZone.removeClass('in hover');
+		//     }, 100);
+		// });
+		
 		$('.photo-carusel').slick({
 			centerMode: true,
 			  centerPadding: '60px',
@@ -145,18 +322,30 @@ Home {{ super()}}
 			        slidesToShow: 1
 			      }
 			    }
-			  ]
+			  ],
+			  arrows: true,
+			  accesibility: true
 		});
 
 		$('a.photoModal').on('click', function(e){
 			e.preventDefault();
 			var caption = $(this).data('caption');
 			var photo_id = $(this).data('id');
-			var filename = $(this).find('img').attr('src');
-			console.log(caption, filename);
-			$('#photoModal .modal-body img').attr('src', filename);
+			var filename = $(this).find('div').css('background-image').split('static/')[1].split(')')[0];
+			$('#photoModal .modal-body div.modal-crop').css('background-image', "url('static/" + filename + "')");
 			$('#photoModal .modal-footer h3').text(caption);
 			$('.voteButtons a').attr('data-id', photo_id);
+			$('.voteButtons a i').addClass('text-muted');
+			$.ajax({
+				type : 'GET',
+				url : "/photos/checkvote/" + photo_id,
+				contentType: 'application/json;charset=UTF-8',
+				success: function(json){
+					$('[data-value="'+ json + '"] i').removeClass('text-muted');
+				},
+				error: function(json){
+				}
+			});
 
 		});
 
@@ -174,13 +363,25 @@ Home {{ super()}}
 
 		$('.voteButtons a').on('click', function(e){
 			e.preventDefault();
+			var photo_id = $(this).data('id');
+			var value = $(this).data('value');
 			$.ajax({
 				type : "POST",
-				data : $(this).data('value'),
-	   			url : "/photos/vote/" + $(this).data('id'),
+				data : value,
+	   			url : "/photos/vote/" + photo_id,
 	   			contentType: 'application/json;charset=UTF-8',
 	   			success: function(json){
-	   				// location.reload(); 
+	   				$('.voteButtons a i').addClass('text-muted');
+					$.ajax({
+						type : 'GET',
+						url : "/photos/checkvote/" + photo_id,
+						contentType: 'application/json;charset=UTF-8',
+						success: function(json){
+							$('[data-value="'+ json + '"] i').removeClass('text-muted');
+						},
+						error: function(json){
+						}
+					});
 			   	}
 			});
 		});
