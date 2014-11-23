@@ -254,18 +254,19 @@
 		{% endif %}
 
 		$('.carusel-photo').hover(function() {
+        		$('.voteButtons a i').addClass('text-muted');
 		        $(this).find('.voteButtons').removeClass('hide');
-		        // var photo_id = $(this).find('a').data('id');
-		        // $.ajax({
-		        // 	type : 'GET',
-		        // 	url : "/photos/checkvote/" + photo_id,
-		        // 	contentType: 'application/json;charset=UTF-8',
-		        // 	success: function(json){
-		        // 		$('[data-value="'+ json + '"] i').removeClass('text-muted');
-		        // 	},
-		        // 	error: function(json){
-		        // 	}
-		        // });
+		        var photo_id = $(this).find('a').data('id');
+		        $.ajax({
+		        	type : 'GET',
+		        	url : "/photos/checkvote/" + photo_id,
+		        	contentType: 'application/json;charset=UTF-8',
+		        	success: function(json){
+		        		$('[data-value="'+ json + '"] i').removeClass('text-muted');
+		        	},
+		        	error: function(json){
+		        	}
+		        });
 
 		    }, function() {
 		        $(this).find('.voteButtons').addClass('hide');
