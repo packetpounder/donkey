@@ -93,6 +93,7 @@ class Photo(db.Model):
     region = db.Column(db.String(128))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     username = db.relationship('User')
+    vote_value = db.Column(db.Integer)
 
     def __repr__(self):
         return '<TraceFile %r, filename: %r>\n' % (self.name, self.filename)
@@ -179,7 +180,7 @@ def home():
 
     else:
         
-        photos = Photo.query.all()
+        photos = Photo.query.order_by(desc(Photo.vote_value)).all()
 
         return render_template('home.html', form=form, photos=photos)
 
@@ -295,7 +296,7 @@ def profile():
 
         user = User.query.filter_by(username=current_user.username).one()
         
-        photos = Photo.query.filter_by(user_id=user.id).all()
+        photos = Photo.query.filter_by(user_id=user.id).order_by(desc(Photo.vote_value)).all()
 
         votes = {}
 
@@ -360,12 +361,22 @@ def api_upload_photo(photoFile, token):
         new_file = Photo(id=c_response['public_id'],
             caption=secure_filename(splitext(photoFile.filename)[0]),
             user_id = user.id,
-            filename = str(c_response['url'])
+            filename = str(c_response['url']),
+            vote_value = 1
             )
 
         db.session.add(new_file)
         db.session.commit()
         db.session.refresh(new_file)
+
+        auto_vote = Vote(
+            photo_id = new_file.id,
+            user_id = current_user.id,
+            value = 1
+            )
+
+        db.session.add(new_vote)
+        db.session.commit()
 
         log('info','File uploaded by \'%s\': %s.' % (user.username, new_file.caption))
         return json.dumps({"filename": new_file.caption,"id":new_file.id}), 202
@@ -459,6 +470,9 @@ def vote(photo_id):
         db.session.flush()
         # db.session.refresh(new_vote)
 
+    #update vote value
+    photo = Photo.query.get(photo_id)
+    photo.vote_value = sum([x.value for x in Vote.query.filter_by(photo_id=photo_id)])
     
     return 'Success', 200
 
