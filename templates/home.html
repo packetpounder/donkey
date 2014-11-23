@@ -20,7 +20,7 @@
 					{% for photo in photos %}
 					   <div class="carusel-photo">
 					      <a class="photoModal" data-toggle="modal" data-target="#photoModal" data-id="{{ photo.id }}" data-caption="{{ photo.caption }}" href="#">
-					      	<div class="carusel-crop img-rounded img-responsive" style="background-image: url('{{ url_for('static', filename='photos/%s' % photo.filename) }}');" ></div>
+					      	<div class="carusel-crop img-rounded img-responsive" style="background-image: url('{{ photo.filename }}');" ></div>
 					      </a>
 		            		<span class="voteButtons vote-hover pull-right text-muted hide">
 			      	      		<a href="#" data-value="down" data-id="{{ photo.id }}"><i class="fa fa-3x fa-thumbs-o-down text-muted"></i></a>
@@ -331,8 +331,8 @@
 			e.preventDefault();
 			var caption = $(this).data('caption');
 			var photo_id = $(this).data('id');
-			var filename = $(this).find('div').css('background-image').split('static/')[1].split(')')[0];
-			$('#photoModal .modal-body div.modal-crop').css('background-image', "url('static/" + filename + "')");
+			var filename = $(this).find('div').css('background-image');
+			$('#photoModal .modal-body div.modal-crop').css('background-image', filename);
 			$('#photoModal .modal-footer h3').text(caption);
 			$('.voteButtons a').attr('data-id', photo_id);
 			$('.voteButtons a i').addClass('text-muted');

@@ -26,7 +26,7 @@ Profile - {{ current_user.username }}
 				<div>
 				    {% for photo in photos %}
 				    	<div class="row profile-tile well">
-				    		<div class="col-md-3 tile-crop" style="background-image: url('{{ url_for('static', filename='photos/%s' % photo.filename) }}');">
+				    		<div class="col-md-3 tile-crop" style="background-image: url('{{ photo.filename }}');">
 				    			
 				    		</div>
 				    		<div class="col-md-9">

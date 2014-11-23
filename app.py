@@ -9,6 +9,7 @@ from flask.ext.script import Manager, Shell
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.login import LoginManager, login_required, login_user, UserMixin, logout_user, current_user
 from werkzeug import secure_filename
+import cloudinary, cloudinary.uploader, cloudinary.api
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm, ProfileForm, AddUser, EditUser, TempPasswordForm
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -16,8 +17,9 @@ from flask.ext.migrate import Migrate, MigrateCommand
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    #SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/donkey'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/donkey'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    CLOUDINARY_URL = 'cloudinary://368227621922385:c2-QBS-sjsFavGCW03mbSpeMxIY@donkey'
     SECRET_KEY = 'yCt2asdfTsLHvL#BG6'
 
 config = Config
@@ -30,6 +32,12 @@ ALLOWED_EXTENSIONS = ['png', 'jpg', 'gif']
 UPLOAD_FOLDER = os.path.join(basedir, 'static/photos/')
 
 app.config.from_object(config)
+
+cloudinary.config (
+    cloud_name = "donkey", 
+    api_key = "368227621922385", 
+    api_secret = "c2-QBS-sjsFavGCW03mbSpeMxIY" 
+    )
 
 def format_comma(value):
     return "{:,.0f}".format(value)
@@ -78,9 +86,9 @@ class User(UserMixin, db.Model):
 class Photo(db.Model):
     __tablename__ = 'photos'
 
-    id = db.Column(db.String(8), primary_key=True)
+    id = db.Column(db.String(64), primary_key=True)
     caption = db.Column(db.String(128), index=True)
-    filename = db.Column(db.String(128))
+    filename = db.Column(db.String(512))
     location = db.Column(db.String(128))
     region = db.Column(db.String(128))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -94,7 +102,7 @@ class Vote(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    photo_id = db.Column(db.String(8), db.ForeignKey('photos.id'))
+    photo_id = db.Column(db.String(64), db.ForeignKey('photos.id'))
     value = db.Column(db.Integer)
 
     def __repr__(self):
@@ -342,16 +350,17 @@ def api_upload_photo(photoFile, token):
 
     if photoFile and allowed_file(photoFile.filename):
 
-        print photoFile.filename
+        # print photoFile.filename
 
         filetype = splitext(photoFile.filename)[1].strip('.')
         uuid_filename = '.'.join([str(uuid.uuid4()),filetype])
-        photoFile.save(os.path.join(UPLOAD_FOLDER, uuid_filename))
+        # photoFile.save(os.path.join(UPLOAD_FOLDER, uuid_filename))
+        c_response = cloudinary.uploader.upload(photoFile)
         
-        new_file = Photo(id=str(uuid.uuid4())[:8],
+        new_file = Photo(id=c_response['public_id'],
             caption=secure_filename(splitext(photoFile.filename)[0]),
             user_id = user.id,
-            filename = uuid_filename
+            filename = str(c_response['url'])
             )
 
         db.session.add(new_file)
@@ -398,7 +407,8 @@ def api_delete_file(photo_id, token):
         db.session.commit()
 
         # try:
-        os.remove(os.path.join(UPLOAD_FOLDER, photoFile.filename))
+        # os.remove(os.path.join(UPLOAD_FOLDER, photoFile.filename))
+        cloudinary.api.delete_resources([photo_id])
         # except Exception as e:
         #     print e
 
