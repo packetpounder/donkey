@@ -22,6 +22,7 @@
 					      <a class="photoModal" data-toggle="modal" data-target="#photoModal" data-id="{{ photo.id }}" data-caption="{{ photo.caption }}" href="#">
 					      	<div class="carusel-crop img-rounded img-responsive" style="background-image: url('{{ photo.filename }}');" ></div>
 					      </a>
+					      	<div class="voteCircle home-carusel pull-right">{{ photo.vote_value }}</div>
 		            		<div class="voteButtons vote-hover pull-right text-muted hide">
 			      	      		<a href="#" data-value="down" data-id="{{ photo.id }}"><i class="fa fa-3x fa-thumbs-o-down text-muted"></i></a>
 			      	      		<a href="#" data-value="up" data-id="{{ photo.id }}"><i class="fa fa-3x fa-thumbs-o-up text-muted"></i></a>

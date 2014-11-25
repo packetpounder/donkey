@@ -29,16 +29,26 @@ Profile - {{ current_user.username }}
 				    		<div class="col-md-3 tile-crop" style="background-image: url('{{ photo.filename }}');">
 				    			
 				    		</div>
-				    		<div class="col-md-9">
-				    			<dl class="dl-horizontal">
+				    		<div class="col-md-2">
+					    		<div class="voteCircle">{{ photo.vote_value }}</div>
+				    		</div>
+				    		<div class="col-md-6">
+				    			<dl class="">
 					    			<dt>Caption</dt>
-					    			<dd>{{ photo.caption }}</dd>
-					    			<dt>Up Votes</dt>
-					    			<dd>{{ votes[photo.id]['up'] }}</dd>
-					    			<dt>Down Votes</dt>
+					    			<dd>
+					    				<span class="caption">
+						    				<span class="well">{{ photo.caption }}</span>
+					    				</span>
+					    				<span class="editCaption hide">
+					    					<input data-id="{{ photo.id }}" class="form caption"/>
+					    				</span>
+					    			</dd>
+					    			<dt>Total Votes</dt>
+					    			<dd>(-{{ votes[photo.id]['down'] }}/{{ votes[photo.id]['up'] }})</dd>
+					    			<!-- <dt>Down Votes</dt>
 					    			<dd>{{ votes[photo.id]['down'] }}</dd>
 					    			<dt>Vote Value</dt>
-					    			<dd>{{ photo.vote_value }}</dd>
+					    			<dd>{{ photo.vote_value }}</dd> -->
 				    			</dl>
 				    		</div>
 				    		
