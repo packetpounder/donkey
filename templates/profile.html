@@ -116,7 +116,54 @@ Profile - {{ current_user.username }}
 		
 		{% if photos %}
 			
-		
+			$('span.well').on ('dblclick', function(e){
+				e.preventDefault();
+
+				var current_caption = $(this).text();
+				console.log(current_caption);
+
+				$(this).closest('span.caption').addClass('hide');
+				var editCaption = $(this).closest('dd').children('.editCaption');
+				editCaption.removeClass('hide');
+				editCaption.children('input.caption').val(current_caption).focus();
+			});
+
+
+			$('input.caption').keyup(function(e){
+					event.preventDefault();
+					
+					if (e.keyCode == 13) {
+						var parentSpan = $(this).closest('span.editCaption');
+						var data = $(this).val();
+						var photo_id = $(this).data('id');
+
+						$.ajax({
+							type : "POST",
+							url : "/savecaption/" + photo_id,
+							data : data,
+							dataType : "json",
+							contentType: 'application/json;charset=UTF-8',
+
+						});
+
+						parentSpan.addClass('hide');
+						parentSpan.closest('dd').children('span.caption').removeClass('hide');
+						parentSpan.closest('dd').children('span.caption').children('span').text(data);
+					
+					} else if (e.keyCode == 27) {
+						$(this).trigger('blur');
+					}
+			});
+
+
+			$('input.caption').blur(function(){
+				event.preventDefault();
+
+				$(this).parent('.editCaption').addClass('hide');
+				$(this).closest('dd').children('.caption').removeClass('hide');
+				
+			});
+
 		{% else %}
 			
 

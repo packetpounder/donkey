@@ -492,21 +492,21 @@ def check_vote(photo_id):
         return 'none', 204
 
 
-# @app.route('/savename/<file_id>', methods=['POST'])
-# @login_required
-# def save_name(file_id):
+@app.route('/savecaption/<photo_id>', methods=['POST'])
+@login_required
+def save_name(photo_id):
 
-#     name = request.data
+    caption = request.data
 
-#     if name:
+    if caption:
         
-#         traceFile = TraceFile.query.filter_by(id=file_id).one()
+        photo = Photo.query.filter_by(id=photo_id).one()
 
-#         traceFile.name = secure_filename(name)
+        photo.caption = secure_filename(caption)
 
-#         db.session.commit()
+        db.session.commit()
     
-#     return 'Name has been updated.'
+    return 'Caption has been updated.'
 
 @app.route('/downloadfile/<file_id>/<attachment_name>')
 @login_required

@@ -79,6 +79,22 @@ hr.star-primary:after {
     margin: 0 auto;
 }
 
+dl dt, dl dd{
+    line-height: 2;
+}
+
+input.caption, span.caption span {
+    line-height: 1.2;
+    margin-right: 20px;
+}
+
+span.well, input.caption {
+    padding: 5px;
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 0px;
+}
+
 header {
     text-align: center;
     color: #fff;
